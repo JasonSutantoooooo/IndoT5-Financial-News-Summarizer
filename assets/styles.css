@@ -1,0 +1,401 @@
+/* ============================================================
+   NEWS SUMMARIZER - Global Styles
+   ============================================================ */
+
+/* --- Page Header Card --- */
+.page-header {
+    background: linear-gradient(135deg, #1a2744 0%, #2d3a5e 100%);
+    border-radius: 14px;
+    padding: 28px 32px;
+    margin-bottom: 24px;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.page-header-icon {
+    font-size: 36px;
+    line-height: 1;
+}
+
+.page-header h1 {
+    color: white !important;
+    font-size: 24px !important;
+    font-weight: 600 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.page-header p {
+    color: #a0b0d0 !important;
+    font-size: 14px !important;
+    margin: 4px 0 0 0 !important;
+}
+
+/*--- Input Card ---*/
+/* .input-container {
+    background: white;
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+    margin-bottom: 16px;
+} */
+
+/* hanya container SETELAH anchor */
+#input-anchor + div {
+    background: linear-gradient(135deg, #1a2744 0%, #2d3a5e 100%);
+    padding: 24px;
+    border-radius: 14px;
+    margin-bottom: 20px;
+}
+
+/* .input-label {
+    font-size: 14px;
+    color: #4a5568;
+    font-weight: 500;
+    margin-bottom: 8px;
+} */
+
+/* --- Textarea ---
+textarea {
+    background-color: #ffffff !important;
+    border: 1.5px solid #e2e8f0 !important;
+    border-radius: 10px !important;
+    color: #2d3748 !important;
+    font-size: 15px !important;
+}
+
+textarea:focus {
+    border-color: #e53e3e !important;
+    box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.15) !important;
+}
+
+textarea::placeholder {
+    color: #a0aec0 !important;
+} */
+
+/* ============================================================
+   BUTTONS — Global default (action buttons: Buat Ringkasan, dll)
+   ============================================================ */
+.stButton > button {
+    background-color: #e7000b !important;
+    color: white !important;
+    border-radius: 10px !important;
+    height: 52px !important;
+    width: 100% !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    border: none !important;
+    letter-spacing: 0.3px !important;
+    transition: background 0.2s, transform 0.1s !important;
+    box-shadow: none !important;
+}
+
+.stButton > button:hover {
+    background-color: #e53e3e !important;  
+    color: white !important;
+    transform: translateY(-1px) !important;
+}
+
+.stButton > button:active {
+    background-color: #501515 !important;
+    transform: scale(0.97) !important;
+}
+
+/* --- Result Card --- */
+.result-card {
+    background: #c1dcff;
+    border-radius: 14px;
+    padding: 24px;
+    margin-top: 12px;
+}
+
+.result-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.result-card-header span {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a2744;
+}
+
+.result-text-box {
+    background: #f7faff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 18px 20px;
+    min-height: 100px;
+    font-size: 15px;
+    color: #2d3748;
+    line-height: 1.7;
+}
+
+.result-meta {
+    margin-top: 14px;
+    font-size: 13px;
+    color: #718096;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.result-meta .time-value {
+    color: #e53e3e;
+    font-weight: 700;
+}
+
+/* --- Kamus --- */
+.kamus-search-box {
+    background: white;
+    border-radius: 14px;
+    padding: 16px 20px;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+    margin-bottom: 16px;
+}
+
+.filter-bar {
+    background: white;
+    border-radius: 14px;
+    padding: 16px 20px;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+    margin-bottom: 16px;
+}
+
+.filter-label {
+    font-size: 13px;
+    color: #718096;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+/* .filter-container {
+    background: white;
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: none;    
+} */
+
+.filter-title {
+    font-size: 16px;
+    color: #718096;
+    font-weight: 700;
+    margin-bottom: 14px;
+}
+
+/* Letter filter pills */
+.letter-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.pill {
+    padding: 6px 14px;
+    border-radius: 50px;
+    border: 1.5px solid #e2e8f0;
+    background: white;
+    font-size: 13px;
+    font-weight: 600;
+    color: #4a5568;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.pill.active {
+    background: #e53e3e;
+    border-color: #e53e3e;
+    color: white;
+}
+
+.pill:hover:not(.active) {
+    border-color: #e53e3e;
+    color: #e53e3e;
+}
+
+/* Term Card */
+.term-card {
+    background: rgb(239, 239, 239);
+    border-radius: 14px;
+    padding: 20px 24px;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+    margin-bottom: 14px;
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+}
+
+.term-icon {
+    background: #1a2744;
+    border-radius: 10px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+}
+
+.term-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #1a2744;
+    margin-bottom: 4px;
+}
+
+.term-desc {
+    font-size: 14px;
+    color: #4a5568;
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+.padanan-label {
+    font-size: 13px;
+    color: #718096;
+    margin-right: 8px;
+}
+
+.padanan-badge {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 20px;
+    border: 1.5px solid #fc8181;
+    color: #c53030;
+    font-size: 13px;
+    font-weight: 600;
+    background: white;
+}
+
+/* --- About Page --- */
+.about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.profile-card {
+    background: rgb(222, 222, 222);
+    border-radius: 14px;
+    padding: 32px 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    text-align: center;
+    color: white;
+}
+
+.profile-avatar-wrap {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    margin: 0 auto 20px auto;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+ 
+.profile-img {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+    flex-shrink: 0;
+}
+
+.profile-avatar {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px auto;
+    font-size: 44px;
+}
+
+.profile-avatar.red { background: #e53e3e; }
+.profile-avatar.dark { background: #2d3a5e; }
+
+.profile-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a2744;
+    margin-bottom: 4px;
+}
+
+.profile-nim {
+    font-size: 13px;
+    color: #4a5568;
+    margin-bottom: 2px;
+}
+
+.profile-prodi {
+    font-size: 13px;
+    color: #4a5568;
+    margin-bottom: 6px;
+}
+
+.profile-batch {
+    font-size: 13px;
+    color: #e53e3e;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.profile-divider {
+    border-top: 2px solid rgba(48, 48, 48);
+}
+
+.profile-role {
+    font-size: 13px;
+    color: #718096;
+}
+
+.latar-card {
+    background:  rgb(222, 222, 222);
+    border-radius: 14px;
+    margin-top: 20px;
+    padding: 28px 32px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.latar-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.latar-icon-wrap {
+    background: #e53e3e;
+    border-radius: 10px;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+}
+
+.latar-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a2744;
+}
+
+.latar-text {
+    font-size: 15px;
+    color: #4a5568;
+    line-height: 1.8;
+}

@@ -1,0 +1,8 @@
+[theme]
+base="light"
+backgroundColor="white"
+borderColor="#e5e5e5"
+primaryColor="#c1c1c1"
+
+[theme.sidebar]
+backgroundColor="#1d293d"
