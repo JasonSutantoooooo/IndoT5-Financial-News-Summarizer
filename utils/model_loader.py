@@ -12,8 +12,8 @@ MIN_NEW_TOKENS    = 50
 
 @st.cache_resource(show_spinner="⏳ Memuat model IndoT5, harap tunggu...")
 def load_model():
-    tokenizer = T5Tokenizer.from_pretrained(REPO_ID, force_download=True)
-    model     = T5ForConditionalGeneration.from_pretrained(REPO_ID, force_download=True)
+    tokenizer = T5Tokenizer.from_pretrained(REPO_ID)
+    model     = T5ForConditionalGeneration.from_pretrained(REPO_ID)
     model.eval()
     return tokenizer, model
 
