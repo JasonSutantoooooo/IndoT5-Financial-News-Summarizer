@@ -1,13 +1,6 @@
 import streamlit as st
 import os
 import sys
-import shutil
-
-#Clear cache
-cache_dir = os.path.expanduser("~/.cache/huggingface")
-
-if os.path.exists(cache_dir):
-    shutil.rmtree(cache_dir)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(BASE_DIR)
