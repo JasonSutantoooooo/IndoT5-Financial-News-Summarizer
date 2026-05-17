@@ -42,6 +42,8 @@ def render(kamus: dict):
             type="primary",
         )
 
+    st.info("ℹ️ Ringkasan otomatis mungkin kurang akurat untuk artikel yang mengandung banyak perbandingan angka. Harap verifikasi dengan artikel asli.")
+
     if "ringkasan_output" not in st.session_state:
         st.session_state.ringkasan_output = None
     if "ringkasan_time" not in st.session_state:

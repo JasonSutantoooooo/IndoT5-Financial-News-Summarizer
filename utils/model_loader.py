@@ -5,7 +5,7 @@ from utils.post_processing import trim_incomplete_sentence
 REPO_ID = "Jason2608/indot5-fin-summarize"
 SUMMARIZE_PREFIX = "ringkas: "
 
-MAX_INPUT_LENGTH  = 512
+MAX_INPUT_LENGTH  = 1024
 MAX_NEW_TOKENS    = 300   
 MIN_NEW_TOKENS    = 50
 
@@ -40,6 +40,7 @@ def summarize(text: str) -> str:
         early_stopping=False,         
         no_repeat_ngram_size=3,
         length_penalty=1.3,
+        repetition_penalty=1.2,
     )
 
     raw_result = tokenizer.decode(output_ids[0], skip_special_tokens=True)
