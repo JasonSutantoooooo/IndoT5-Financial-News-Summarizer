@@ -30,7 +30,7 @@ def render(kamus: dict):
         input_text = st.text_area(
             label="",
             height=200,
-            placeholder="Masukkan URL artikel (cnbcindonesia.com, detik.com, dan idxchannel.com) atau teks berita langsung...",
+            placeholder="Masukkan URL artikel (cnbcindonesia.com, detik.com, dan idxchannel.com) dawg atau teks berita langsung...",
             key="input_ringkasan",
             label_visibility="collapsed"
         )
