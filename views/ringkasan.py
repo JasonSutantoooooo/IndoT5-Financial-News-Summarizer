@@ -9,6 +9,7 @@ from utils.post_processing import ganti_istilah_dengan_imbuhan
 from utils.preprocess import clean_noise
 from utils.scraper import scrape_article, is_url
 from utils.model_loader import summarize
+from utils.lang_detector import is_indonesian_text
 
 
 def render(kamus: dict):
@@ -29,7 +30,7 @@ def render(kamus: dict):
         input_text = st.text_area(
             label="",
             height=200,
-            placeholder="Masukkan URL artikel (cnbcindonesia.com, detik.com, dan idxchannel.com) test atau teks berita langsung...",
+            placeholder="Masukkan URL artikel (cnbcindonesia.com, detik.com, dan idxchannel.com) atau teks berita langsung...",
             key="input_ringkasan",
             label_visibility="collapsed"
         )
@@ -42,7 +43,11 @@ def render(kamus: dict):
             type="primary",
         )
 
-    st.info("ℹ️ Ringkasan otomatis mungkin kurang akurat untuk artikel yang mengandung banyak perbandingan angka. Harap verifikasi dengan artikel asli.")
+    st.warning(
+        "⚠️ Ringkasan dihasilkan secara otomatis oleh sistem mungkin mengandung kesalahan atau ketidakakuratan informasi. "
+        "Pengguna disarankan untuk tetap memverifikasi informasi dengan artikel asli. "
+        "Segala kerugian finansial atau keputusan yang diambil berdasarkan hasil ringkasan bukan merupakan tanggung jawab aplikasi."
+    )
 
     if "ringkasan_output" not in st.session_state:
         st.session_state.ringkasan_output = None
@@ -63,26 +68,30 @@ def render(kamus: dict):
         else:
             start = time.time()
 
-            with st.spinner("Memproses..."):
-                try:
-                    if is_url(raw_input):
-                        status_placeholder = st.empty()
-                        status_placeholder.info("🔗 Mengambil teks dari URL...")
-                        article_text = scrape_article(raw_input)
+            try:
+                if is_url(raw_input):
+                    status_placeholder = st.empty()
+                    status_placeholder.info("🔗 Mengambil teks dari URL...")
+                    article_text = scrape_article(raw_input)
 
-                        if not article_text or len(article_text.strip()) <= 10:
-                            status_placeholder.empty()
-                            st.error("❌ Gagal mengambil teks dari URL. Pastikan URL valid dan dapat diakses.")
-                            st.stop()
-
+                    if not article_text or len(article_text.strip()) <= 10:
                         status_placeholder.empty()
-                        source_type = "url"
-                    else:
-                        article_text = raw_input
-                        source_type = "text"
+                        st.error("❌ Gagal mengambil teks dari URL. Pastikan URL valid dan dapat diakses.")
+                        st.stop()
 
-                    cleaned_text = clean_noise(article_text)
+                    status_placeholder.empty()
+                    source_type = "url"
+                else:
+                    article_text = raw_input
+                    source_type = "text"
 
+                cleaned_text = clean_noise(article_text)
+
+                if not is_indonesian_text(cleaned_text):
+                    st.error("⚠️ Link atau teks artikel berita yang dimasukkan tidak terdeteksi sebagai bahasa Indonesia. Harap masukkan teks dalam bahasa Indonesia.")
+                    st.stop()
+
+                with st.spinner("Memproses..."):
                     raw_output = summarize(cleaned_text)
 
                     if kamus:
@@ -96,8 +105,8 @@ def render(kamus: dict):
                     st.session_state.ringkasan_time      = elapsed
                     st.session_state.ringkasan_source_type = source_type
 
-                except Exception as e:
-                    st.error(f"❌ Terjadi kesalahan: {e}")
+            except Exception as e:
+                st.error(f"❌ Terjadi kesalahan: {e}")
 
     if st.session_state.ringkasan_output:
         source_label = (
