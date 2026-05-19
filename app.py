@@ -6,7 +6,9 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(BASE_DIR)
 
 from utils.post_processing import load_kamus, load_kamus_for_display
-from views import ringkasan, kamus, tentang
+from utils.auth            import render_sidebar_auth
+from views                 import ringkasan, kamus, tentang, history
+
 from streamlit_option_menu import option_menu
 
 st.set_page_config(
@@ -17,37 +19,39 @@ st.set_page_config(
     menu_items=None,
 )
 
+
 def load_css():
     css_file = os.path.join(BASE_DIR, "assets", "styles.css")
     if os.path.exists(css_file):
         with open(css_file, "r") as f:
-            css = f.read()
-            st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
+            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
     else:
-        st.warning("⚠️ File CSS tidak ditemukan. Pastikan `assets/styles.css` tersedia.")
+        st.warning("⚠️ File CSS tidak ditemukan.")
+
 
 load_css()
 
-KAMUS_FILE = os.path.join(BASE_DIR, "kamus_perbaikan.xlsx")
-
 @st.cache_data
 def get_kamus_dict():
-    return load_kamus(KAMUS_FILE)
+    return load_kamus()
+
 
 @st.cache_data
 def get_kamus_list():
-    return load_kamus_for_display(KAMUS_FILE)
+    return load_kamus_for_display()
+
 
 kamus_dict = get_kamus_dict()
 kamus_list = get_kamus_list()
 
+# ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
     st.markdown("## 📰 Financial News Summarizer")
 
     selected_menu = option_menu(
         menu_title=None,
-        options=["Ringkasan Berita", "Kamus Padanan", "Tentang Pembuat"],
-        icons=['file-text', 'book', 'person'],
+        options=["Ringkasan Berita", "History", "Kamus Padanan", "Tentang Pembuat"],
+        icons=["file-text", "clock-history", "book", "person"],
         default_index=0,
         styles={
             "container": {
@@ -68,21 +72,20 @@ with st.sidebar:
                 "color": "white",
                 "font-weight": "600",
             },
-            "icon": {
-                "color": "white",
-                "font-size": "16px"
-            },
-            "icon-selected": {
-                "color": "white"
-            }
-        }
+            "icon": {"color": "white", "font-size": "16px"},
+            "icon-selected": {"color": "white"},
+        },
     )
 
+    st.divider()
+    render_sidebar_auth()
+
+# ── Routing ───────────────────────────────────────────────────────────────────
 if selected_menu == "Ringkasan Berita":
     ringkasan.render(kamus=kamus_dict)
-
+elif selected_menu == "History":
+    history.render(kamus=kamus_dict)
 elif selected_menu == "Kamus Padanan":
     kamus.render(kamus_list=kamus_list)
-
 elif selected_menu == "Tentang Pembuat":
     tentang.render()
