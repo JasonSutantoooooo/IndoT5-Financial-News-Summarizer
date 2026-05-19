@@ -11,7 +11,7 @@ def render():
     </div>
     """, unsafe_allow_html=True)
 
-    with st.expander("Meringkas Berita Finansial", expanded=True):
+    with st.expander("Meringkas Berita Finansial"):
 
         st.markdown("""
         1. Buka halaman **Ringkasan Berita** pada sidebar.
