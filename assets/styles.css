@@ -399,3 +399,44 @@ textarea::placeholder {
     color: #4a5568;
     line-height: 1.8;
 }
+
+.pembuat-container {
+    background-color: #f0f2f6;
+    border-radius: 12px;
+    padding: 1.5rem 1.5rem 2rem 1.5rem;
+}
+
+.pembuat-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+}
+
+.pembuat-icon {
+    font-size: 1.3rem;
+}
+
+.pembuat-icon-wrap {
+    background: #e53e3e;
+    border-radius: 10px;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+}
+
+.pembuat-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    font-size: 20px;
+    color: #1a1a2e;
+}
+
+.pembuat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}

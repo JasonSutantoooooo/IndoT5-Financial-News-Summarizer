@@ -13,7 +13,7 @@ from utils.scraper         import scrape_article, is_url
 from utils.model_loader    import summarize
 from utils.lang_detector   import is_indonesian_text
 from utils.auth            import is_logged_in, current_user
-from utils.history         import add_history
+from utils.riwayat         import add_history
 from utils.highlight       import build_highlighted_html, inject_tooltip_css
 
 
@@ -138,8 +138,6 @@ def render(kamus: dict):
 
         encoded = json.dumps(st.session_state.ringkasan_output)
 
-        # Seluruh result card + tombol copy dalam satu components.html
-        # agar tombol bisa berada di dalam card dan onclick berfungsi
         components.html(f"""
         <style>
           body {{ margin:0; padding:0; font-family: sans-serif; }}

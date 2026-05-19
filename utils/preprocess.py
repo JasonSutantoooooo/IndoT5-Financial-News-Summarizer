@@ -1,6 +1,5 @@
 import re
 
-
 def clean_noise(text: str) -> str:
     noise_patterns = [
         r"^(?:[^,]+,?\s*)?CNBC\s*Indonesia(?:\.com)?\s*[-—–]\s*",

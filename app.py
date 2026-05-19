@@ -7,7 +7,7 @@ sys.path.append(BASE_DIR)
 
 from utils.post_processing import load_kamus, load_kamus_for_display
 from utils.auth            import render_sidebar_auth
-from views                 import ringkasan, kamus, tentang, history
+from views                 import ringkasan, kamus, riwayat, tentang
 
 from streamlit_option_menu import option_menu
 
@@ -18,7 +18,6 @@ st.set_page_config(
     initial_sidebar_state="expanded",
     menu_items=None,
 )
-
 
 def load_css():
     css_file = os.path.join(BASE_DIR, "assets", "styles.css")
@@ -50,7 +49,7 @@ with st.sidebar:
 
     selected_menu = option_menu(
         menu_title=None,
-        options=["Ringkasan Berita", "History", "Kamus Padanan", "Tentang Pembuat"],
+        options=["Ringkasan Berita", "Riwayat Ringkasan", "Kamus Padanan", "Tentang"],
         icons=["file-text", "clock-history", "book", "person"],
         default_index=0,
         styles={
@@ -83,9 +82,9 @@ with st.sidebar:
 # ── Routing ───────────────────────────────────────────────────────────────────
 if selected_menu == "Ringkasan Berita":
     ringkasan.render(kamus=kamus_dict)
-elif selected_menu == "History":
-    history.render(kamus=kamus_dict)
+elif selected_menu == "Riwayat Ringkasan":
+    riwayat.render(kamus=kamus_dict)
 elif selected_menu == "Kamus Padanan":
     kamus.render(kamus_list=kamus_list)
-elif selected_menu == "Tentang Pembuat":
+elif selected_menu == "Tentang":
     tentang.render()

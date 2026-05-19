@@ -30,7 +30,6 @@ def _github_get_kamus_bytes() -> bytes | None:
             if resp.status_code == 200:
                 return base64.b64decode(resp.json()["content"])
 
-        # Fallback: baca dari file lokal (localhost)
         if os.path.exists(_KAMUS_FILE):
             print("Menggunakan file kamus lokal (localhost mode)")
             with open(_KAMUS_FILE, "rb") as f:
@@ -42,9 +41,6 @@ def _github_get_kamus_bytes() -> bytes | None:
     except Exception as e:
         print(f"Error mengambil kamus: {e}")
         return None
-
-
-# --- sisa fungsi tidak berubah sama sekali ---
 
 def load_kamus(kolom_istilah="istilah", kolom_padanan="padanan") -> dict:
     try:

@@ -1,7 +1,18 @@
 import hashlib
+import secrets
 import streamlit as st
-from supabase import create_client, Client
 
+from datetime import datetime, timedelta, timezone
+from supabase import create_client, Client
+from streamlit_cookies_manager import EncryptedCookieManager
+
+cookies = EncryptedCookieManager(
+    prefix="indot5_app_",
+    password="random-secret-password",
+)
+
+if not cookies.ready():
+    st.stop()
 
 # ── Supabase client ───────────────────────────────────────────────────────────
 
@@ -22,6 +33,53 @@ def _get_salt() -> str:
 def _hash(password: str) -> str:
     return hashlib.sha256((_get_salt() + password).encode()).hexdigest()
 
+def _generate_session_token():
+    return secrets.token_hex(32)
+
+def restore_login():
+    if "logged_in" in st.session_state:
+        return
+
+    token = cookies.get("session_token")
+
+    if not token:
+        st.session_state["logged_in"] = False
+        st.session_state["username"] = None
+        return
+
+    try:
+        res = (
+            _get_client()
+            .table("users")
+            .select("username, session_expired_at")
+            .eq("session_token", token)
+            .execute()
+        )
+
+        if not res.data:
+            raise Exception()
+
+        user = res.data[0]
+
+        expired_at = datetime.fromisoformat(
+            user["session_expired_at"].replace("Z", "+00:00")
+        )
+
+        if expired_at < datetime.now(timezone.utc):
+            raise Exception()
+
+        st.session_state["logged_in"] = True
+        st.session_state["username"] = user["username"]
+
+    except Exception:
+        cookies["session_token"] = ""
+        cookies.save()
+
+        st.session_state["logged_in"] = False
+        st.session_state["username"] = None
+
+
+restore_login()
 
 # ── Session helpers ───────────────────────────────────────────────────────────
 
@@ -37,21 +95,49 @@ def current_user() -> str | None:
 
 def login(username: str, password: str) -> bool:
     uname = username.lower().strip()
+
     try:
         res = (
             _get_client()
             .table("users")
-            .select("password_hash")
+            .select("id, password_hash")
             .eq("username", uname)
             .execute()
         )
+
         if not res.data:
             return False
-        if res.data[0]["password_hash"] != _hash(password):
+
+        user = res.data[0]
+
+        if user["password_hash"] != _hash(password):
             return False
+
+        token = _generate_session_token()
+
+        expired_at = (
+            datetime.now(timezone.utc) + timedelta(days=30)
+        ).isoformat()
+
+        (
+            _get_client()
+            .table("users")
+            .update({
+                "session_token": token,
+                "session_expired_at": expired_at
+            })
+            .eq("id", user["id"])
+            .execute()
+        )
+
+        cookies["session_token"] = token
+        cookies.save()
+
         st.session_state["logged_in"] = True
-        st.session_state["username"]  = uname
+        st.session_state["username"] = uname
+
         return True
+
     except Exception:
         return False
 
@@ -88,14 +174,32 @@ def register(username: str, password: str) -> tuple[bool, str]:
 
 
 def logout():
-    st.session_state["logged_in"] = False
-    st.session_state["username"]  = None
+    token = cookies.get("session_token")
 
+    try:
+        if token:
+            (
+                _get_client()
+                .table("users")
+                .update({
+                    "session_token": None,
+                    "session_expired_at": None
+                })
+                .eq("session_token", token)
+                .execute()
+            )
+    except Exception:
+        pass
+
+    cookies["session_token"] = ""
+    cookies.save()
+
+    st.session_state["logged_in"] = False
+    st.session_state["username"] = None
 
 # ── UI Components ─────────────────────────────────────────────────────────────
 
 def render_login_form(key_suffix: str = ""):
-    """Form login + register dalam tab. Dipanggil di halaman yang butuh auth."""
     tab_login, tab_register = st.tabs(["🔐 Login", "📝 Daftar Akun"])
 
     with tab_login:
@@ -123,17 +227,18 @@ def render_login_form(key_suffix: str = ""):
             else:
                 ok, msg = register(new_u, new_p)
                 if ok:
-                    st.success(f"Akun **{new_u.lower()}** berhasil dibuat! Silakan login.")
+                    login(new_u, new_p)
+                    st.success(f"Akun **{new_u.lower()}** berhasil dibuat!")
+                    st.rerun()
                 else:
                     st.error(msg)
 
 
 def render_sidebar_auth():
-    """Info user + tombol logout di sidebar."""
     if is_logged_in():
         st.sidebar.markdown(f"👤 **{current_user()}**")
         if st.sidebar.button("Logout", use_container_width=True, key="btn_logout"):
             logout()
             st.rerun()
     else:
-        st.sidebar.markdown("👤 *Belum login*")
+        st.sidebar.markdown("👤 Guest Mode")

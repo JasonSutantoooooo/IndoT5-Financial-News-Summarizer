@@ -7,22 +7,19 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.auth      import is_logged_in, current_user, render_login_form
-from utils.history   import load_history
+from utils.riwayat   import load_history
 from utils.highlight import build_highlighted_html
 
 
 def _to_wib(iso_str: str) -> str:
-    """Konversi ISO timestamp dari Supabase (UTC) ke WIB (UTC+7)."""
     if not iso_str or iso_str == "-":
         return "-"
     try:
         from datetime import datetime, timezone, timedelta
         WIB = timezone(timedelta(hours=7))
-        # Supabase format: 2024-01-01T10:00:00+00:00 atau 2024-01-01T10:00:00.000000+00:00
         dt = datetime.fromisoformat(iso_str.replace("Z", "+00:00"))
         return dt.astimezone(WIB).strftime("%Y-%m-%d %H:%M:%S")
     except Exception:
-        # Fallback: ambil string mentah + tambah 7 jam manual tidak reliable, return as-is
         return iso_str[:19].replace("T", " ")
 
 
@@ -88,7 +85,6 @@ def render(kamus: dict = None):
             )
             encoded = json.dumps(summary)
 
-            # Card + tombol copy dalam satu components.html
             components.html(f"""
             <style>
               body {{ margin:0; padding:0; font-family: sans-serif; }}

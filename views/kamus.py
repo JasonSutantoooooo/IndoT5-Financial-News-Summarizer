@@ -17,7 +17,6 @@ st.set_page_config(layout="wide")
 
 
 def _github_get_file():
-    """Ambil file kamus dari GitHub, return (df, sha)."""
     token  = st.secrets["GITHUB_TOKEN"]
     repo   = st.secrets["GITHUB_REPO"]
     branch = st.secrets.get("GITHUB_BRANCH", "main")
@@ -32,7 +31,6 @@ def _github_get_file():
     resp = requests.get(url, headers=headers, timeout=10)
 
     if resp.status_code == 404:
-        # File belum ada di repo, mulai DataFrame kosong
         df = pd.DataFrame(columns=["istilah", "padanan", "deskripsi"])
         return df, None
 
@@ -47,13 +45,11 @@ def _github_get_file():
 
 
 def _github_push_file(df: pd.DataFrame, sha: str | None, commit_message: str) -> bool:
-    """Tulis DataFrame sebagai Excel lalu push ke GitHub."""
     token  = st.secrets["GITHUB_TOKEN"]
     repo   = st.secrets["GITHUB_REPO"]
     branch = st.secrets.get("GITHUB_BRANCH", "main")
     path   = st.secrets.get("KAMUS_PATH", "kamus_perbaikan.xlsx")
 
-    # Serialisasi DataFrame → bytes Excel
     buf = io.BytesIO()
     df.to_excel(buf, index=False)
     buf.seek(0)
@@ -70,7 +66,7 @@ def _github_push_file(df: pd.DataFrame, sha: str | None, commit_message: str) ->
         "branch":  branch,
     }
     if sha:
-        payload["sha"] = sha   # wajib ada agar GitHub tahu ini update, bukan file baru
+        payload["sha"] = sha
 
     resp = requests.put(url, headers=headers, json=payload, timeout=15)
     if resp.status_code in (200, 201):
@@ -79,14 +75,12 @@ def _github_push_file(df: pd.DataFrame, sha: str | None, commit_message: str) ->
     st.error(f"GitHub API error {resp.status_code}: {resp.text}")
     return False
 
-
 def _add_entry(istilah: str, padanan: str, deskripsi: str) -> bool:
     try:
         token = st.secrets.get("GITHUB_TOKEN")
         repo  = st.secrets.get("GITHUB_REPO")
 
         if token and repo:
-            # Mode Streamlit Cloud → simpan ke GitHub
             df, sha = _github_get_file()
             for col in ["istilah", "padanan", "deskripsi"]:
                 if col not in df.columns:
@@ -97,7 +91,6 @@ def _add_entry(istilah: str, padanan: str, deskripsi: str) -> bool:
             message = f"kamus: tambah '{istilah.strip()}' oleh {user}"
             success = _github_push_file(df, sha, message)
         else:
-            # Mode localhost → simpan ke file lokal
             if os.path.exists(KAMUS_FILE):
                 df = pd.read_excel(KAMUS_FILE)
                 df.columns = [c.lower().strip() for c in df.columns]
@@ -190,7 +183,6 @@ def render(kamus_list: list):
                 unsafe_allow_html=True
             )
 
-    # ── Tambah entry baru ─────────────────────────────────────────────────────
     st.divider()
     st.markdown("### ➕ Tambah Padanan Kata Baru")
 

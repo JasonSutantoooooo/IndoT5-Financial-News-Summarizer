@@ -16,7 +16,6 @@ HEADERS = {
 TIMEOUT = 15
 _SUPPORTED = "cnbcindonesia.com, detik.com, idxchannel.com"
 
-
 def _detect_source(url: str) -> str:
     domain = urlparse(url).netloc.lower()
     if "cnbcindonesia" in domain:
@@ -86,15 +85,11 @@ def _scrape_idx(url: str) -> str:
     text = " ".join(p.get_text() for p in paragraphs)
     return _clean_basic(text)
 
-
-# ── Dispatcher utama ──────────────────────────────────────────────────────────
-
 _SCRAPERS = {
     "cnbc":  _scrape_cnbc,
     "detik": _scrape_detik,
     "idx":   _scrape_idx,
 }
-
 
 def scrape_article(url: str) -> str:
     url = url.strip()
@@ -110,7 +105,6 @@ def scrape_article(url: str) -> str:
         )
 
     return _SCRAPERS[source](url)
-
 
 def is_url(text: str) -> bool:
     text = text.strip()
