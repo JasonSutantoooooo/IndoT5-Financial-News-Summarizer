@@ -12,4 +12,4 @@ tiktoken
 sentencepiece
 langdetect
 supabase
-streamlit-cookies-manager
+streamlit-cookies-controller

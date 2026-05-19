@@ -4,31 +4,22 @@ import streamlit as st
 
 from datetime import datetime, timedelta, timezone
 from supabase import create_client, Client
-from streamlit_cookies_manager import EncryptedCookieManager
+from streamlit_cookies_controller import CookieController
 
-cookies = EncryptedCookieManager(
-    prefix="indot5_app_",
-    password="random-secret-password",
-)
+cookie_controller = CookieController()
 
-if not cookies.ready():
-    st.stop()
-
-# ── Supabase client ───────────────────────────────────────────────────────────
-
+# ── Supabase client ───────────────────────────────────────────────
 @st.cache_resource
 def _get_client() -> Client:
     url = st.secrets["supabase"]["url"]
     key = st.secrets["supabase"]["key"]
     return create_client(url, key)
 
-
 def _get_salt() -> str:
     try:
         return st.secrets["supabase"]["salt"]
     except Exception:
         return "indot5-fallback-salt"
-
 
 def _hash(password: str) -> str:
     return hashlib.sha256((_get_salt() + password).encode()).hexdigest()
@@ -40,7 +31,7 @@ def restore_login():
     if "logged_in" in st.session_state:
         return
 
-    token = cookies.get("session_token")
+    token = cookie_controller.get("session_token")
 
     if not token:
         st.session_state["logged_in"] = False
@@ -57,7 +48,7 @@ def restore_login():
         )
 
         if not res.data:
-            raise Exception()
+            raise Exception("Token tidak ditemukan")
 
         user = res.data[0]
 
@@ -66,33 +57,27 @@ def restore_login():
         )
 
         if expired_at < datetime.now(timezone.utc):
-            raise Exception()
+            raise Exception("Token expired")
 
         st.session_state["logged_in"] = True
         st.session_state["username"] = user["username"]
 
     except Exception:
-        cookies["session_token"] = ""
-        cookies.save()
-
+        cookie_controller.remove("session_token")
         st.session_state["logged_in"] = False
         st.session_state["username"] = None
 
 
 restore_login()
 
-# ── Session helpers ───────────────────────────────────────────────────────────
-
+# ── Session helpers ───────────────────────────────────────────────
 def is_logged_in() -> bool:
     return st.session_state.get("logged_in", False)
-
 
 def current_user() -> str | None:
     return st.session_state.get("username", None)
 
-
-# ── Auth logic ────────────────────────────────────────────────────────────────
-
+# ── Auth logic ────────────────────────────────────────────────────
 def login(username: str, password: str) -> bool:
     uname = username.lower().strip()
 
@@ -114,24 +99,16 @@ def login(username: str, password: str) -> bool:
             return False
 
         token = _generate_session_token()
-
         expired_at = (
             datetime.now(timezone.utc) + timedelta(days=30)
         ).isoformat()
 
-        (
-            _get_client()
-            .table("users")
-            .update({
-                "session_token": token,
-                "session_expired_at": expired_at
-            })
-            .eq("id", user["id"])
-            .execute()
-        )
+        _get_client().table("users").update({
+            "session_token": token,
+            "session_expired_at": expired_at
+        }).eq("id", user["id"]).execute()
 
-        cookies["session_token"] = token
-        cookies.save()
+        cookie_controller.set("session_token", token, max_age=30*24*60*60)
 
         st.session_state["logged_in"] = True
         st.session_state["username"] = uname
@@ -153,7 +130,6 @@ def register(username: str, password: str) -> tuple[bool, str]:
         return False, "Password minimal 6 karakter."
 
     try:
-        # Cek duplikat
         res = (
             _get_client()
             .table("users")
@@ -174,31 +150,22 @@ def register(username: str, password: str) -> tuple[bool, str]:
 
 
 def logout():
-    token = cookies.get("session_token")
+    token = cookie_controller.get("session_token")
 
     try:
         if token:
-            (
-                _get_client()
-                .table("users")
-                .update({
-                    "session_token": None,
-                    "session_expired_at": None
-                })
-                .eq("session_token", token)
-                .execute()
-            )
+            _get_client().table("users").update({
+                "session_token": None,
+                "session_expired_at": None
+            }).eq("session_token", token).execute()
     except Exception:
         pass
 
-    cookies["session_token"] = ""
-    cookies.save()
-
+    cookie_controller.remove("session_token")
     st.session_state["logged_in"] = False
     st.session_state["username"] = None
 
-# ── UI Components ─────────────────────────────────────────────────────────────
-
+# ── UI Components ─────────────────────────────────────────────────
 def render_login_form(key_suffix: str = ""):
     tab_login, tab_register = st.tabs(["🔐 Login", "📝 Daftar Akun"])
 
