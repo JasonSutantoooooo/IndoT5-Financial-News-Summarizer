@@ -6,7 +6,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(BASE_DIR)
 
 from utils.post_processing import load_kamus, load_kamus_for_display
-from utils.auth            import render_sidebar_auth
+from utils.auth            import render_sidebar_auth, restore_login
 from views                 import ringkasan, kamus, riwayat, tentang
 
 from streamlit_option_menu import option_menu
@@ -27,7 +27,7 @@ def load_css():
     else:
         st.warning("⚠️ File CSS tidak ditemukan.")
 
-
+restore_login()
 load_css()
 
 @st.cache_data

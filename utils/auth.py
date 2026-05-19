@@ -71,10 +71,6 @@ def restore_login():
         st.session_state["logged_in"] = False
         st.session_state["username"] = None
 
-
-restore_login()
-
-
 # ── Session helpers ───────────────────────────────────────────────────────────
 
 def is_logged_in() -> bool:
