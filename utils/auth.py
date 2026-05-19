@@ -4,16 +4,16 @@ import streamlit as st
 
 from datetime import datetime, timedelta, timezone
 from supabase import create_client, Client
-from streamlit_cookies_controller import CookieController
 
-cookie_controller = CookieController()
 
-# ── Supabase client ───────────────────────────────────────────────
+# ── Supabase client ───────────────────────────────────────────────────────────
+
 @st.cache_resource
 def _get_client() -> Client:
     url = st.secrets["supabase"]["url"]
     key = st.secrets["supabase"]["key"]
     return create_client(url, key)
+
 
 def _get_salt() -> str:
     try:
@@ -21,17 +21,20 @@ def _get_salt() -> str:
     except Exception:
         return "indot5-fallback-salt"
 
+
 def _hash(password: str) -> str:
     return hashlib.sha256((_get_salt() + password).encode()).hexdigest()
 
 def _generate_session_token():
     return secrets.token_hex(32)
 
+
 def restore_login():
     if "logged_in" in st.session_state:
         return
 
-    token = cookie_controller.get("session_token")
+    # Ambil token dari URL query params
+    token = st.query_params.get("session")
 
     if not token:
         st.session_state["logged_in"] = False
@@ -63,21 +66,27 @@ def restore_login():
         st.session_state["username"] = user["username"]
 
     except Exception:
-        cookie_controller.remove("session_token")
+        # Hapus token invalid dari URL
+        st.query_params.clear()
         st.session_state["logged_in"] = False
         st.session_state["username"] = None
 
 
 restore_login()
 
-# ── Session helpers ───────────────────────────────────────────────
+
+# ── Session helpers ───────────────────────────────────────────────────────────
+
 def is_logged_in() -> bool:
     return st.session_state.get("logged_in", False)
+
 
 def current_user() -> str | None:
     return st.session_state.get("username", None)
 
-# ── Auth logic ────────────────────────────────────────────────────
+
+# ── Auth logic ────────────────────────────────────────────────────────────────
+
 def login(username: str, password: str) -> bool:
     uname = username.lower().strip()
 
@@ -108,7 +117,8 @@ def login(username: str, password: str) -> bool:
             "session_expired_at": expired_at
         }).eq("id", user["id"]).execute()
 
-        cookie_controller.set("session_token", token, max_age=30*24*60*60)
+        # Simpan token ke URL query params
+        st.query_params["session"] = token
 
         st.session_state["logged_in"] = True
         st.session_state["username"] = uname
@@ -150,7 +160,7 @@ def register(username: str, password: str) -> tuple[bool, str]:
 
 
 def logout():
-    token = cookie_controller.get("session_token")
+    token = st.query_params.get("session")
 
     try:
         if token:
@@ -161,11 +171,15 @@ def logout():
     except Exception:
         pass
 
-    cookie_controller.remove("session_token")
+    # Hapus token dari URL
+    st.query_params.clear()
+
     st.session_state["logged_in"] = False
     st.session_state["username"] = None
 
-# ── UI Components ─────────────────────────────────────────────────
+
+# ── UI Components ─────────────────────────────────────────────────────────────
+
 def render_login_form(key_suffix: str = ""):
     tab_login, tab_register = st.tabs(["🔐 Login", "📝 Daftar Akun"])
 
