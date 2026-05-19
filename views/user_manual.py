@@ -11,7 +11,7 @@ def render():
     </div>
     """, unsafe_allow_html=True)
 
-    with st.expander("1. Meringkas Berita Finansial", expanded=True):
+    with st.expander("Meringkas Berita Finansial", expanded=True):
 
         st.markdown("""
         1. Buka halaman **Ringkasan Berita** pada sidebar.
@@ -25,7 +25,7 @@ def render():
         5. Ringkasan otomatis tersimpan jika sudah login.
         """)
 
-    with st.expander("2. Menggunakan Kamus Padanan"):
+    with st.expander("Menggunakan Kamus Padanan"):
 
         st.markdown("""
         1. Buka halaman **Kamus Padanan**.
@@ -37,7 +37,7 @@ def render():
         4. Sistem akan menampilkan padanan kata dan deskripsinya.
         """)
 
-    with st.expander("3. Riwayat Ringkasan"):
+    with st.expander("Riwayat Ringkasan"):
 
         st.markdown("""
         1. Login atau register terlebih dahulu.
@@ -47,7 +47,7 @@ def render():
         3. Semua ringkasan yang pernah dibuat akan tampil.
         """)
 
-    with st.expander("4. Login dan Registrasi"):
+    with st.expander("Login dan Registrasi"):
 
         st.markdown("""
         1. Untuk login atau membuat akun baru, buka halaman
@@ -71,7 +71,7 @@ def render():
         untuk keluar dari akun.
         """)
 
-    with st.expander("5. Menambahkan Entri Kamus"):
+    with st.expander("Menambahkan Entri Kamus"):
 
         st.markdown("""
         1. Login terlebih dahulu menggunakan akun Anda.
