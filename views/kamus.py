@@ -37,7 +37,7 @@ def _github_get_file():
     resp.raise_for_status()
     data        = resp.json()
     sha         = data["sha"]
-    content_b64 = data["content"]                          # sudah base64 dari GitHub
+    content_b64 = data["content"]                      
     raw_bytes   = base64.b64decode(content_b64)
     df          = pd.read_excel(io.BytesIO(raw_bytes))
     df.columns  = [c.lower().strip() for c in df.columns]

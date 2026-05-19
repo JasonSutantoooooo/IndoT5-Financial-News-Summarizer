@@ -23,7 +23,7 @@ def render(kamus: dict):
     <div class="page-header">
         <div class="page-header-icon">📰</div>
         <div>
-            <h1>Ringkasan Artikel Berita</h1>
+            <h1>Ringkasan Artikel Berita Finansial</h1>
             <p>Masukkan URL artikel atau teks berita untuk mendapatkan ringkasan otomatis</p>
         </div>
     </div>

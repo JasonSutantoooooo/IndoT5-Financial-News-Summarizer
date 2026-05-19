@@ -29,6 +29,7 @@ def render():
         '<div class="profile-avatar dark">👨‍🏫</div>'
     )
 
+    # --- 1. Page Header ---
     st.markdown("""
         <div class="page-header">
             <div class="page-header-icon">👨‍💻</div>
@@ -37,8 +38,9 @@ def render():
                 <p>Informasi mengenai pengembangan aplikasi Financial News Summarizer</p>
             </div>
         </div>
-        """, unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
+    # --- 2. Latar Belakang ---
     st.markdown("""
     <div class="latar-card">
         <div class="latar-header">
@@ -49,9 +51,11 @@ def render():
             Aplikasi ini dikembangkan sebagai salah satu kontribusi dalam membantu pembaca memahami informasi keuangan yang sering kali kompleks dan penuh istilah teknis. Banyak berita finansial sulit dipahami oleh pembaca karena penggunaan bahasa yang formal dan struktur kalimat yang panjang. Oleh karena itu, aplikasi ini memanfaatkan teknologi Natural Language Processing (NLP) berbasis model Transformer, yaitu IndoT5, untuk menghasilkan ringkasan teks secara otomatis sekaligus mengganti istilah finansial menjadi padanan yang lebih mudah dipahami. Dengan adanya aplikasi ini, diharapkan pengguna dapat memperoleh informasi yang lebih ringkas, jelas, dan tetap mempertahankan makna utama dari berita yang dibaca.
         </div>
     </div>
-
     <div style="margin-top: 2rem;"></div>
+    """, unsafe_allow_html=True)
 
+    # --- 3. Pembuat (f-string agar avatar bisa disisipkan) ---
+    st.markdown(f"""
     <div class="pembuat-container">
         <div class="pembuat-header">
             <div class="pembuat-icon-wrap">👥</div>
@@ -82,4 +86,5 @@ def render():
             </div>
         </div>
     </div>
-    """.replace("{jason_avatar}", jason_avatar).replace("{bagus_avatar}", bagus_avatar), unsafe_allow_html=True)
+    <div style="margin-top: 2rem;"></div>
+    """, unsafe_allow_html=True)

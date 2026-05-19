@@ -29,7 +29,7 @@ def render(kamus: dict = None):
     <div class="page-header">
         <div class="page-header-icon">📚</div>
         <div>
-            <h1>History Ringkasan</h1>
+            <h1>Riwayat Ringkasan</h1>
             <p>Riwayat ringkasan berita yang pernah Anda proses</p>
         </div>
     </div>
