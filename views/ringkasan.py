@@ -67,12 +67,25 @@ def render(kamus: dict):
         raw_input = input_text.strip()
 
         if not raw_input:
+            st.session_state.ringkasan_output      = None
+            st.session_state.ringkasan_time        = None
+            st.session_state.ringkasan_source_type = None
+            st.session_state.ringkasan_input_raw   = None
             st.warning("⚠️ Silakan masukkan URL artikel atau teks berita terlebih dahulu.")
 
         elif not is_url(raw_input) and len(raw_input) <= 10:
+            st.session_state.ringkasan_output      = None
+            st.session_state.ringkasan_time        = None
+            st.session_state.ringkasan_source_type = None
+            st.session_state.ringkasan_input_raw   = None
             st.warning("⚠️ Teks berita terlalu singkat. Masukkan teks yang lebih lengkap (lebih dari 10 karakter).")
 
         else:
+            st.session_state.ringkasan_output      = None
+            st.session_state.ringkasan_time        = None
+            st.session_state.ringkasan_source_type = None
+            st.session_state.ringkasan_input_raw   = None
+
             start = time.time()
             try:
                 if is_url(raw_input):

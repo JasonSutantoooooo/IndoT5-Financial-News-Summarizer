@@ -8,7 +8,7 @@ import io
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from utils.auth import is_logged_in, current_user, render_login_form
+from utils.auth import current_user, is_admin
 
 _BASE_DIR  = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 KAMUS_FILE = os.path.join(_BASE_DIR, "kamus_perbaikan.xlsx")
@@ -183,13 +183,11 @@ def render(kamus_list: list):
                 unsafe_allow_html=True
             )
 
+    if not is_admin():
+        return
+
     st.divider()
     st.markdown("### ➕ Tambah Padanan Kata Baru")
-
-    if not is_logged_in():
-        st.info("🔒 Login diperlukan untuk menambahkan entri baru ke kamus.")
-        render_login_form(key_suffix="kamus")
-        return
 
     st.caption(f"Menambahkan sebagai: **{current_user()}**")
 

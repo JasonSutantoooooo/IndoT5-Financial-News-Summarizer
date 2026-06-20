@@ -16,6 +16,32 @@ HEADERS = {
 TIMEOUT = 15
 _SUPPORTED = "cnbcindonesia.com, detik.com, idxchannel.com"
 
+def _get_canonical_url(soup: BeautifulSoup) -> str | None:
+    tag = soup.find("link", rel="canonical") or soup.find("meta", property="og:url")
+    if tag:
+        return (tag.get("href") or tag.get("content") or "").strip()
+    return None
+
+def _normalize(url: str) -> str:
+    url = url.split("?")[0].rstrip("/")
+    return url.lower()
+
+def _validate_url_integrity(requested_url: str, resp: requests.Response, soup: BeautifulSoup) -> None:
+    final_url = resp.url
+    if _normalize(final_url) != _normalize(requested_url) and not final_url.startswith(requested_url):
+        canonical = _get_canonical_url(soup)
+        if canonical and _normalize(canonical) != _normalize(requested_url):
+            raise ValueError(
+                f"URL tidak lengkap/valid. Anda memasukkan:\n  {requested_url}\n"
+                f"tapi server mengarahkan ke artikel lain:\n  {canonical or final_url}"
+            )
+
+    canonical = _get_canonical_url(soup)
+    if canonical and _normalize(canonical) != _normalize(requested_url):
+        raise ValueError(
+            f"URL tidak sesuai dengan artikel aslinya. Mungkin yang anda maksud: {canonical}"
+        )
+
 def _detect_source(url: str) -> str:
     domain = urlparse(url).netloc.lower()
     if "cnbcindonesia" in domain:
@@ -37,6 +63,8 @@ def _scrape_cnbc(url: str) -> str:
     resp.raise_for_status()
     soup = BeautifulSoup(resp.text, "lxml")
 
+    _validate_url_integrity(url, resp, soup)
+
     for tag in soup.find_all("table", class_="linksisip"):
         tag.decompose()
 
@@ -56,6 +84,8 @@ def _scrape_detik(url: str) -> str:
     resp.raise_for_status()
     soup = BeautifulSoup(resp.text, "lxml")
 
+    _validate_url_integrity(url, resp, soup)
+
     for tag in soup.find_all(["script", "style", "aside", "nav"]):
         tag.decompose()
 
@@ -74,6 +104,8 @@ def _scrape_idx(url: str) -> str:
     resp = requests.get(url, headers=HEADERS, timeout=TIMEOUT)
     resp.raise_for_status()
     soup = BeautifulSoup(resp.text, "lxml")
+
+    _validate_url_integrity(url, resp, soup)
 
     article = (
         soup.find("div", class_="detail-content")

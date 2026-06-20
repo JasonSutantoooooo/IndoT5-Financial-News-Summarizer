@@ -39,13 +39,14 @@ def restore_login():
     if not token:
         st.session_state["logged_in"] = False
         st.session_state["username"] = None
+        st.session_state["is_admin"] = False
         return
 
     try:
         res = (
             _get_client()
             .table("users")
-            .select("username, session_expired_at")
+            .select("username, session_expired_at, is_admin")
             .eq("session_token", token)
             .execute()
         )
@@ -64,12 +65,14 @@ def restore_login():
 
         st.session_state["logged_in"] = True
         st.session_state["username"] = user["username"]
+        st.session_state["is_admin"] = bool(user.get("is_admin", False))
 
     except Exception:
         # Hapus token invalid dari URL
         st.query_params.clear()
         st.session_state["logged_in"] = False
         st.session_state["username"] = None
+        st.session_state["is_admin"] = False
 
 # ── Session helpers ───────────────────────────────────────────────────────────
 
@@ -81,6 +84,10 @@ def current_user() -> str | None:
     return st.session_state.get("username", None)
 
 
+def is_admin() -> bool:
+    return st.session_state.get("logged_in", False) and st.session_state.get("is_admin", False)
+
+
 # ── Auth logic ────────────────────────────────────────────────────────────────
 
 def login(username: str, password: str) -> bool:
@@ -90,7 +97,7 @@ def login(username: str, password: str) -> bool:
         res = (
             _get_client()
             .table("users")
-            .select("id, password_hash")
+            .select("id, password_hash, is_admin")
             .eq("username", uname)
             .execute()
         )
@@ -118,6 +125,7 @@ def login(username: str, password: str) -> bool:
 
         st.session_state["logged_in"] = True
         st.session_state["username"] = uname
+        st.session_state["is_admin"] = bool(user.get("is_admin", False))
 
         return True
 
@@ -172,6 +180,7 @@ def logout():
 
     st.session_state["logged_in"] = False
     st.session_state["username"] = None
+    st.session_state["is_admin"] = False
 
 
 # ── UI Components ─────────────────────────────────────────────────────────────
