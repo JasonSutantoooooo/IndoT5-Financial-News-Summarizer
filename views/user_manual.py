@@ -11,6 +11,24 @@ def render():
     </div>
     """, unsafe_allow_html=True)
 
+    with st.expander("Dashboard Berita Hari Ini"):
+
+        st.markdown("""
+        1. Buka halaman **Dashboard** pada sidebar (halaman utama saat aplikasi dibuka).
+
+        2. Sistem otomatis menampilkan ringkasan berita finansial terbaru
+        hari ini dari 3 kanal: **CNBC Indonesia**, **Detik Finance**,
+        dan **IDX Channel**.
+
+        3. Setiap kartu berita menampilkan gambar, judul, dan ringkasan
+        otomatis. Tekan **Baca artikel asli** untuk membuka sumber berita.
+
+        4. Gunakan tab di atas daftar berita untuk memfilter berdasarkan kanal.
+
+        5. Ringkasan diperbarui otomatis sekali sehari. Tekan tombol
+        **🔄 Perbarui** untuk mengambil ulang berita terbaru kapan saja.
+        """)
+
     with st.expander("Meringkas Berita Finansial"):
 
         st.markdown("""
